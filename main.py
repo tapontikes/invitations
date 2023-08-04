@@ -18,7 +18,7 @@ def merge_documents(temp_path, output_path):
         composer.save(output_path)
 
 
-def merge_address_info(template_path, output_path, addresses):
+def generate_envelope(template_path, output_path, addresses):
     output_path = output_path + "/output_%d.docx"
     for index, address in enumerate(addresses):
         # Load the template
@@ -50,15 +50,15 @@ def iter_rows():
 
         if cells[0] == "Print" and cells[14] == "F":
             data.append({
-            "PREFIX": cells[1],
-            "SUFFIX": "",
-            "NAME": cells[2] + " " + cells[3],
-            "ADDRESS1": cells[9],
-            "ADDRESS2": cells[10],
-            "CITY": cells[11],
-            "STATE": cells[12],
-            "ZIP": cells[13]
-        })
+                "PREFIX": cells[1],
+                "SUFFIX": "",
+                "NAME": cells[2] + " " + cells[3],
+                "ADDRESS1": cells[9],
+                "ADDRESS2": cells[10],
+                "CITY": cells[11],
+                "STATE": cells[12],
+                "ZIP": cells[13]
+            })
     return data
 
 
@@ -66,15 +66,17 @@ for file in os.listdir("tmp"):
     if file:
         os.remove(os.path.join("tmp", file))
 
-
 dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(dotenv_path)
 template_path = os.environ.get("TEMPLATE_PATH")
 output_path = os.environ.get("OUTPUT_PATH")
 temp_path = os.environ.get("TEMP_PATH")
 
+# Download Sheet
 get_sheet()
+# Parse Sheet for Addresses
 addresses = iter_rows()
-
-merge_address_info(template_path, temp_path, addresses)
+# Create a Word document with the address data based off the template
+generate_envelope(template_path, temp_path, addresses)
+# Merge all Word Documents into one
 merge_documents(temp_path, output_path)
