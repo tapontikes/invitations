@@ -46,17 +46,18 @@ def iter_rows():
     data = []
 
     for i in range(5, ws.max_row + 1):
-        cells = [cell.value for cell in ws[i]]
-        if cells[0] == "Print":
+        cells = ["" if cell.value is None else cell.value for cell in ws[i]]
+
+        if cells[0] == "Print" and cells[14] == "F":
             data.append({
             "PREFIX": cells[1],
             "SUFFIX": "",
             "NAME": cells[2] + " " + cells[3],
-            "ADDRESS1": "Test ADDR",
-            "ADDRESS2": " ",
-            "CITY": "Cranston",
-            "STATE": "Rhode Island",
-            "ZIP": "02920"
+            "ADDRESS1": cells[9],
+            "ADDRESS2": cells[10],
+            "CITY": cells[11],
+            "STATE": cells[12],
+            "ZIP": cells[13]
         })
     return data
 
