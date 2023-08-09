@@ -72,14 +72,22 @@ def iter_rows():
         partner_ref = get_int(cells[15])
 
         if print_state == "Print" and complete_status == "F":
-            names = [str.join(" ", [prefix, first_name, last_name, suffix]).strip(" ")]
+            names = [str.join(" ", [prefix, first_name, last_name, suffix])]
             # If partner ref is found, members living together but unwed
             if partner_ref:
                 for partner_row in ws.iter_rows(min_row=5):
                     if get_int(partner_row[16].value) == partner_ref:
-                        names.append(str.join(" ", [partner_row[1].value, partner_row[2].value,partner_row[3].value]).strip(" "))
+                        names.append(str.join(" ", [partner_row[1].value, partner_row[2].value,partner_row[3].value]))
                         break
-            data.append({"NAMES": names,"ADDRESS1": address_one,"ADDRESS2": address_two,"CITY": city,"STATE": state,"ZIP": zip_code})
+
+            data.append({
+                "NAMES": names,
+                "ADDRESS1": address_one,
+                "ADDRESS2": address_two,
+                "CITY": city,
+                "STATE": state,
+                "ZIP": zip_code
+            })
 
     return data
 
