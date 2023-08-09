@@ -55,7 +55,7 @@ def iter_rows():
     data = []
 
     for i in range(5, ws.max_row + 1):
-
+        # Get all the cells in the row
         cells = [" " if cell.value is None else cell.value for cell in ws[i]]
 
         print_state = cells[0]
