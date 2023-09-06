@@ -62,6 +62,7 @@ def iter_rows():
         prefix = cells[1]
         first_name = cells[2]
         last_name = cells[3]
+        invited_by = cells[5]
         suffix = cells[8]
         address_one = cells[9]
         address_two = cells[10]
@@ -71,13 +72,13 @@ def iter_rows():
         complete_status = cells[14]
         partner_ref = get_int(cells[15])
 
-        if print_state == "Print" and complete_status == "F":
+        if print_state == "Print" and complete_status == "F" and address_one != "TBD":
             names = [str.join(" ", [prefix, first_name, last_name, suffix])]
             # If partner ref is found, members living together but unwed
             if partner_ref:
                 for partner_row in ws.iter_rows(min_row=5):
                     if get_int(partner_row[16].value) == partner_ref:
-                        names.append(str.join(" ", [partner_row[1].value, partner_row[2].value,partner_row[3].value]))
+                        names.append(str.join(" ", [partner_row[1].value, partner_row[2].value, partner_row[3].value]))
                         break
 
             data.append({
@@ -109,11 +110,14 @@ template_path = os.environ.get("TEMPLATE_PATH")
 output_path = os.environ.get("OUTPUT_PATH")
 temp_path = os.environ.get("TEMP_PATH")
 
-# Download Sheet
-get_sheet()
-# Parse Sheet for Addresses
-addresses = iter_rows()
-# Create a Word document with the address data based off the template
-generate_envelope(template_path, temp_path, addresses)
-# Merge all Word Documents into one
-merge_documents(temp_path, output_path)
+try:
+    # Download Sheet
+    get_sheet()
+    # Parse Sheet for Addresses
+    addresses = iter_rows()
+    # Create a Word document with the address data based off the template
+    generate_envelope(template_path, temp_path, addresses)
+    # Merge all Word Documents into one
+    merge_documents(temp_path, output_path)
+except Exception as e:
+    print(e)
