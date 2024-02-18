@@ -58,26 +58,32 @@ def iter_rows():
         # Get all the cells in the row
         cells = [" " if cell.value is None else cell.value for cell in ws[i]]
 
+        partner_ref_column = 15
+        id_column = 16
+
         print_state = cells[0]
         prefix = cells[1]
         first_name = cells[2]
         last_name = cells[3]
         invited_by = cells[5]
-        suffix = cells[8]
-        address_one = cells[9]
-        address_two = cells[10]
-        city = cells[11]
-        state = cells[12]
-        zip_code = cells[13]
-        complete_status = cells[14]
-        partner_ref = get_int(cells[15])
+        shower = cells[7]
+        suffix = cells[9]
+        address_one = cells[10]
+        address_two = cells[11]
+        city = cells[12]
+        state = cells[13]
+        zip_code = cells[14]
+        partner_ref = get_int(cells[partner_ref_column])
+        id = get_int(cells[16])
+        completed_save_the_date = cells[17]
+        completed_shower = cells[18]
 
-        if print_state == "Print" and complete_status == "F" and address_one != "TBD":
+        if print_state == "Print" and shower == "T" and completed_shower == "F" and address_one != "TBD":
             names = [str.join(" ", [prefix, first_name, last_name, suffix])]
             # If partner ref is found, members living together but unwed
             if partner_ref:
                 for partner_row in ws.iter_rows(min_row=5):
-                    if get_int(partner_row[16].value) == partner_ref:
+                    if get_int(partner_row[id_column].value) == partner_ref:
                         names.append(str.join(" ", [partner_row[1].value, partner_row[2].value, partner_row[3].value]))
                         break
 
@@ -92,6 +98,11 @@ def iter_rows():
 
     return data
 
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(dotenv_path)
+template_path = os.environ.get("TEMPLATE_PATH")
+output_path = os.environ.get("OUTPUT_PATH")
+temp_path = os.environ.get("TEMP_PATH")
 
 try:
     for file in os.listdir("tmp"):
@@ -99,16 +110,12 @@ try:
             os.remove(os.path.join("tmp", file))
 
     os.remove("guest.xlsx")
-    os.remove(os.path.join("dist", "complete.docx"))
+    os.remove(os.path.normpath(output_path))
 
 except Exception as e:
     print(e)
+    pass
 
-dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
-load_dotenv(dotenv_path)
-template_path = os.environ.get("TEMPLATE_PATH")
-output_path = os.environ.get("OUTPUT_PATH")
-temp_path = os.environ.get("TEMP_PATH")
 
 try:
     # Download Sheet
