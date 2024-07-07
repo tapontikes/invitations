@@ -33,8 +33,8 @@ def generate_envelope(template_path, output_path, addresses):
 
 
 def get_sheet():
-    sheet_id = "13FSw1U-ZZZWU50gShZyZp6nAHHSqZfOaR8u1Q6RETyE"
-    url = "https://docs.google.com/spreadsheets/d/{}/export?format=xlsx".format(sheet_id)
+    sheet_id = "1vyP000arby2FBn82CuRk9HX3Ai6Cy4O4ddV4ofa-Q0E"
+    url = "https://docs.google.com/spreadsheets/d/{}/export?format=xlsx&gid=1714946056#gid=1714946056".format(sheet_id)
     response = requests.get(url)
     with open("guest.xlsx", "wb") as f:
         f.write(response.content)
@@ -54,31 +54,31 @@ def iter_rows():
 
     data = []
 
-    for i in range(5, ws.max_row + 1):
+    for i in range(5, ws.max_row):
         # Get all the cells in the row
         cells = [" " if cell.value is None else cell.value for cell in ws[i]]
 
-        partner_ref_column = 15
-        id_column = 16
+        partner_ref_column = 14
+        id_column = 15
 
         print_state = cells[0]
         prefix = cells[1]
         first_name = cells[2]
         last_name = cells[3]
-        invited_by = cells[5]
-        shower = cells[7]
-        suffix = cells[9]
-        address_one = cells[10]
-        address_two = cells[11]
-        city = cells[12]
-        state = cells[13]
-        zip_code = cells[14]
+        invited_by = cells[4]
+        rehersal_dinner = cells[6]
+        suffix = cells[8]
+        address_one = cells[9]
+        address_two = cells[10]
+        city = cells[11]
+        state = cells[12]
+        zip_code = cells[13]
         partner_ref = get_int(cells[partner_ref_column])
-        id = get_int(cells[16])
-        completed_save_the_date = cells[17]
-        completed_shower = cells[18]
+        id = get_int(cells[15])
+        completed = cells[16]
+        ignore = cells[17]
 
-        if print_state == "Print" and shower == "T" and completed_shower == "F" and address_one != "TBD":
+        if print_state == "Print" and ignore == "F" and completed == "F":
             names = [str.join(" ", [prefix, first_name, last_name, suffix])]
             # If partner ref is found, members living together but unwed
             if partner_ref:
@@ -127,4 +127,4 @@ try:
     # Merge all Word Documents into one
     merge_documents(temp_path, output_path)
 except Exception as e:
-    print(e)
+    print(e.format_exc())
