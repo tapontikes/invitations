@@ -8,6 +8,13 @@ from docxtpl import DocxTemplate
 from dotenv import load_dotenv
 
 
+def cleanup():
+    for file in os.listdir("tmp"):
+        if file:
+            os.remove(os.path.join("tmp", file))
+
+    os.remove("guest.xlsx")
+
 def merge_documents(temp_path, output_path):
     master = None
     for index, file in enumerate(os.listdir(temp_path)):
@@ -31,10 +38,10 @@ def generate_envelope(template_path, output_path, addresses):
         # Save the modified document as a new file
         doc.save(output_path.replace("%d", str(index)))
 
-
 def get_sheet():
     sheet_id = "1vyP000arby2FBn82CuRk9HX3Ai6Cy4O4ddV4ofa-Q0E"
-    url = "https://docs.google.com/spreadsheets/d/{}/export?format=xlsx&gid=1714946056#gid=1714946056".format(sheet_id)
+    gid = "1553461875"
+    url = "https://docs.google.com/spreadsheets/d/{}/export?format=xlsx&gid={}#gid={}".format(sheet_id, gid, gid)
     response = requests.get(url)
     with open("guest.xlsx", "wb") as f:
         f.write(response.content)
@@ -105,13 +112,9 @@ output_path = os.environ.get("OUTPUT_PATH")
 temp_path = os.environ.get("TEMP_PATH")
 
 try:
-    for file in os.listdir("tmp"):
-        if file:
-            os.remove(os.path.join("tmp", file))
-
-    os.remove("guest.xlsx")
+    cleanup()
+    # Remove completed file is exist
     os.remove(os.path.normpath(output_path))
-
 except Exception as e:
     print(e)
     pass
@@ -126,5 +129,7 @@ try:
     generate_envelope(template_path, temp_path, addresses)
     # Merge all Word Documents into one
     merge_documents(temp_path, output_path)
+    # Clean temp files
+    cleanup()
 except Exception as e:
     print(e.format_exc())
